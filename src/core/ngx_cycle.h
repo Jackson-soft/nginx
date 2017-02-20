@@ -36,49 +36,49 @@ struct ngx_shm_zone_s {
 
 
 struct ngx_cycle_s {
-    void                  ****conf_ctx;
-    ngx_pool_t               *pool;
+    void                  ****conf_ctx; //配置上下文数组(含所有模块)
+    ngx_pool_t               *pool; //内存池
 
-    ngx_log_t                *log;
+    ngx_log_t                *log; //日志
     ngx_log_t                 new_log;
 
     ngx_uint_t                log_use_stderr;  /* unsigned  log_use_stderr:1; */
 
-    ngx_connection_t        **files;
-    ngx_connection_t         *free_connections;
-    ngx_uint_t                free_connection_n;
+    ngx_connection_t        **files; //连接文件
+    ngx_connection_t         *free_connections; //空闲连接
+    ngx_uint_t                free_connection_n; //空闲连接个数  
 
     ngx_module_t            **modules;
     ngx_uint_t                modules_n;
     ngx_uint_t                modules_used;    /* unsigned  modules_used:1; */
 
-    ngx_queue_t               reusable_connections_queue;
+    ngx_queue_t               reusable_connections_queue; //再利用连接队列
     ngx_uint_t                reusable_connections_n;
 
     ngx_array_t               listening;
-    ngx_array_t               paths;
+    ngx_array_t               paths; //保存着Nginx所有要操作的目录，如果目录不存在，则会试图创建，而创建目录失败将会导致Nginx启动失败。  
 
     ngx_array_t               config_dump;
     ngx_rbtree_t              config_dump_rbtree;
     ngx_rbtree_node_t         config_dump_sentinel;
 
-    ngx_list_t                open_files;
-    ngx_list_t                shared_memory;
+    ngx_list_t                open_files; //保存Nginx已经打开的所有文件(ngx_open_file_t结构体)的单链表。
+    ngx_list_t                shared_memory; //单链表存储ngx_shm_zone_t，每个元素表示一块共享内存。
 
-    ngx_uint_t                connection_n;
-    ngx_uint_t                files_n;
+    ngx_uint_t                connection_n; //表示当前进程中所有连接对象的总数，与下面的connections成员配合使用 
+    ngx_uint_t                files_n; //表示files数组中ngx_connection_t指针的总数 
 
-    ngx_connection_t         *connections;
-    ngx_event_t              *read_events;
-    ngx_event_t              *write_events;
+    ngx_connection_t         *connections; // 连接数组
+    ngx_event_t              *read_events; // 读事件数组
+    ngx_event_t              *write_events; // 写事件数组
 
     ngx_cycle_t              *old_cycle;
 
-    ngx_str_t                 conf_file;
-    ngx_str_t                 conf_param;
-    ngx_str_t                 conf_prefix;
-    ngx_str_t                 prefix;
-    ngx_str_t                 lock_file;
+    ngx_str_t                 conf_file; // nginx配置文件路径，/usr/local/nginx/conf/nginx.conf
+    ngx_str_t                 conf_param; //Nginx处理配置文件时需要特殊处理的在命令行携带的参数，一般是-g选项携带的参数
+    ngx_str_t                 conf_prefix; // nginx配置文件目录，/usr/local/nginx/conf/
+    ngx_str_t                 prefix; // nginx目录，/usr/local/nginx/
+    ngx_str_t                 lock_file; //用于进程间同步的文件锁名称
     ngx_str_t                 hostname;
 };
 

@@ -458,7 +458,7 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
                     conf = confp[cf->cycle->modules[i]->ctx_index];
                 }
             }
-
+            //执行指令对应的功能函数！！
             rv = cmd->set(cf, cmd, conf);
 
             if (rv == NGX_CONF_OK) {
