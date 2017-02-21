@@ -137,7 +137,7 @@ ngx_event_accept(ngx_event_t *ev)
 #if (NGX_STAT_STUB)
         (void) ngx_atomic_fetch_add(ngx_stat_accepted, 1);
 #endif
-
+        //设置负载均衡阀值,进程允许的总连接数的1/8减去空闲连接数
         ngx_accept_disabled = ngx_cycle->connection_n / 8
                               - ngx_cycle->free_connection_n;
 
@@ -151,7 +151,7 @@ ngx_event_accept(ngx_event_t *ev)
 
             return;
         }
-
+        //设置套接字属性
         c->type = SOCK_STREAM;
 
 #if (NGX_STAT_STUB)
@@ -182,7 +182,7 @@ ngx_event_accept(ngx_event_t *ev)
 
         if (ngx_inherited_nonblocking) {
             if (ngx_event_flags & NGX_USE_IOCP_EVENT) {
-                if (ngx_blocking(s) == -1) {
+                if (ngx_blocking(s) == -1) { 
                     ngx_log_error(NGX_LOG_ALERT, ev->log, ngx_socket_errno,
                                   ngx_blocking_n " failed");
                     ngx_close_accepted_connection(c);
@@ -192,7 +192,7 @@ ngx_event_accept(ngx_event_t *ev)
 
         } else {
             if (!(ngx_event_flags & NGX_USE_IOCP_EVENT)) {
-                if (ngx_nonblocking(s) == -1) {
+                if (ngx_nonblocking(s) == -1) { //这里其实是调用fcntl将socket设置为非阻塞
                     ngx_log_error(NGX_LOG_ALERT, ev->log, ngx_socket_errno,
                                   ngx_nonblocking_n " failed");
                     ngx_close_accepted_connection(c);
@@ -297,7 +297,7 @@ ngx_event_accept(ngx_event_t *ev)
 #endif
 
         if (ngx_add_conn && (ngx_event_flags & NGX_USE_EPOLL_EVENT) == 0) {
-            if (ngx_add_conn(c) == NGX_ERROR) {
+            if (ngx_add_conn(c) == NGX_ERROR) { //这里调用事件的add_conn方法将新连接对应的读事件添加到epoll的事件驱动模块中
                 ngx_close_accepted_connection(c);
                 return;
             }
@@ -305,7 +305,7 @@ ngx_event_accept(ngx_event_t *ev)
 
         log->data = NULL;
         log->handler = NULL;
-
+        //调用ngx_lintening_t的hander回调方法
         ls->handler(c);
 
         if (ngx_event_flags & NGX_USE_KQUEUE_EVENT) {
@@ -646,7 +646,7 @@ ngx_trylock_accept_mutex(ngx_cycle_t *cycle)
         if (ngx_accept_mutex_held && ngx_accept_events == 0) {
             return NGX_OK;
         }
-
+        //将所有监听连接的读事件添加到当前的事件驱动模块中
         if (ngx_enable_accept_events(cycle) == NGX_ERROR) {
             ngx_shmtx_unlock(&ngx_accept_mutex);
             return NGX_ERROR;

@@ -835,12 +835,12 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
 
     for (i = 0; i < events; i++) {
         c = event_list[i].data.ptr;
-
+        //取出地址的最后一位
         instance = (uintptr_t) c & 1;
         c = (ngx_connection_t *) ((uintptr_t) c & (uintptr_t) ~1);
 
         rev = c->read;
-
+        //判断这个读事件是否为过期事件
         if (c->fd == -1 || rev->instance != instance) {
 
             /*
@@ -879,7 +879,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
                           c->fd, revents);
         }
 #endif
-
+        //如果是读事件且是活跃的
         if ((revents & EPOLLIN) && rev->active) {
 
 #if (NGX_HAVE_EPOLLRDHUP)
@@ -891,7 +891,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
 #endif
 
             rev->ready = 1;
-
+            //flags参数中含有NGX_POST_EVENTS表示这批事件是要延后处理
             if (flags & NGX_POST_EVENTS) {
                 queue = rev->accept ? &ngx_posted_accept_events
                                     : &ngx_posted_events;
@@ -899,7 +899,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
                 ngx_post_event(rev, queue);
 
             } else {
-                rev->handler(rev);
+                rev->handler(rev); //立即用读事件的回调方法来处理事件
             }
         }
 

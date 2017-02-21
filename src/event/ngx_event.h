@@ -436,17 +436,17 @@ extern ngx_os_io_t  ngx_io;
 #define NGX_EVENT_MODULE      0x544E5645  /* "EVNT" */
 #define NGX_EVENT_CONF        0x02000000
 
-
+//event模块所关注的配置项
 typedef struct {
-    ngx_uint_t    connections;
-    ngx_uint_t    use;
+    ngx_uint_t    connections; //连接池大小
+    ngx_uint_t    use; //选用事件模块所在事件模块中的序号,即ctx_index
 
     ngx_flag_t    multi_accept;
     ngx_flag_t    accept_mutex;
 
     ngx_msec_t    accept_mutex_delay;
 
-    u_char       *name;
+    u_char       *name; //所选用事件模块的名字
 
 #if (NGX_DEBUG)
     ngx_array_t   debug_connection;

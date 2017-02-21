@@ -118,7 +118,7 @@ static ngx_str_t  event_core_name = ngx_string("event_core");
 
 
 static ngx_command_t  ngx_event_core_commands[] = {
-
+    //连接池的大小
     { ngx_string("worker_connections"),
       NGX_EVENT_CONF|NGX_CONF_TAKE1,
       ngx_event_connections,
@@ -139,7 +139,7 @@ static ngx_command_t  ngx_event_core_commands[] = {
       0,
       offsetof(ngx_event_conf_t, multi_accept),
       NULL },
-
+      //负载均衡锁，默认开启
     { ngx_string("accept_mutex"),
       NGX_EVENT_CONF|NGX_CONF_FLAG,
       ngx_conf_set_flag_slot,
@@ -238,7 +238,7 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
     }
 
     delta = ngx_current_msec;
-
+    //调用所有事件模块实现的process_events方法
     (void) ngx_process_events(cycle, timer, flags);
 
     delta = ngx_current_msec - delta;
@@ -915,7 +915,7 @@ ngx_events_block(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     /* count the number of the event modules and set up their indices */
-
+    //初始化ctx_index
     ngx_event_max_module = ngx_count_modules(cf->cycle, NGX_EVENT_MODULE);
 
     ctx = ngx_pcalloc(cf->pool, sizeof(void *));

@@ -22,7 +22,7 @@
 
 static ngx_uint_t        slot;
 static ngx_atomic_t      ngx_time_lock;
-
+//volatile关键字可以用来提醒编译器它后面所定义的变量随时有可能改变，因此编译后的程序每次需要存储或读取这个变量的时候，都会直接从变量地址中读取数据。
 volatile ngx_msec_t      ngx_current_msec;
 volatile ngx_time_t     *ngx_cached_time;
 volatile ngx_str_t       ngx_cached_err_log_time;
