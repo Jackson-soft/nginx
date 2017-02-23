@@ -104,7 +104,7 @@ typedef struct {
     u_char                     addr[NGX_SOCKADDR_STRLEN + 1];
 } ngx_http_listen_opt_t;
 
-
+//HTTP请求的11个处理阶段
 typedef enum {
     NGX_HTTP_POST_READ_PHASE = 0,
 
@@ -132,8 +132,8 @@ typedef ngx_int_t (*ngx_http_phase_handler_pt)(ngx_http_request_t *r,
 
 struct ngx_http_phase_handler_s {
     ngx_http_phase_handler_pt  checker;
-    ngx_http_handler_pt        handler;
-    ngx_uint_t                 next;
+    ngx_http_handler_pt        handler; //HTTP阶段的处理方法
+    ngx_uint_t                 next; //要执行的下一个HTTP处理阶段的序号
 };
 
 

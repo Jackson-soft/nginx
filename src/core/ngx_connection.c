@@ -477,7 +477,7 @@ ngx_open_listening_sockets(ngx_cycle_t *cycle)
                 int  reuseport;
 
                 reuseport = 1;
-
+                //使用 SO_REUSEPORT 杜绝 accept 惊群
                 if (setsockopt(s, SOL_SOCKET, SO_REUSEPORT,
                                (const void *) &reuseport, sizeof(int))
                     == -1)

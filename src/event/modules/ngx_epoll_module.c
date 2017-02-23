@@ -268,13 +268,13 @@ ngx_epoll_aio_init(ngx_cycle_t *cycle, ngx_epoll_conf_t *epcf)
                    "eventfd: %d", ngx_eventfd);
 
     n = 1;
-
+    //设置为无阻塞
     if (ioctl(ngx_eventfd, FIONBIO, &n) == -1) {
         ngx_log_error(NGX_LOG_EMERG, cycle->log, ngx_errno,
                       "ioctl(eventfd, FIONBIO) failed");
         goto failed;
     }
-
+    //初始化异步IO的上下文
     if (io_setup(epcf->aio_requests, &ngx_aio_ctx) == -1) {
         ngx_log_error(NGX_LOG_EMERG, cycle->log, ngx_errno,
                       "io_setup() failed");
@@ -342,7 +342,7 @@ ngx_epoll_init(ngx_cycle_t *cycle, ngx_msec_t timer)
 #endif
 
 #if (NGX_HAVE_FILE_AIO)
-        ngx_epoll_aio_init(cycle, epcf);
+        ngx_epoll_aio_init(cycle, epcf); //内核异步IO
 #endif
 
 #if (NGX_HAVE_EPOLLRDHUP)
@@ -952,7 +952,7 @@ ngx_epoll_eventfd_handler(ngx_event_t *ev)
     struct timespec   ts;
 
     ngx_log_debug0(NGX_LOG_DEBUG_EVENT, ev->log, 0, "eventfd handler");
-
+    //读取已完成的事件数目，并设置到ready中
     n = read(ngx_eventfd, &ready, 8);
 
     err = ngx_errno;
@@ -978,7 +978,7 @@ ngx_epoll_eventfd_handler(ngx_event_t *ev)
     ts.tv_nsec = 0;
 
     while (ready) {
-
+        //获取已完成的异步IO事件
         events = io_getevents(ngx_aio_ctx, 1, 64, event, &ts);
 
         ngx_log_debug1(NGX_LOG_DEBUG_EVENT, ev->log, 0,
@@ -1002,7 +1002,7 @@ ngx_epoll_eventfd_handler(ngx_event_t *ev)
 
                 aio = e->data;
                 aio->res = event[i].res;
-
+                //将事件放到ngx_posted_events队列中延后执行
                 ngx_post_event(e, &ngx_posted_events);
             }
 

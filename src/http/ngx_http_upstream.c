@@ -708,7 +708,7 @@ ngx_http_upstream_init_request(ngx_http_request_t *r)
                                                NGX_HTTP_INTERNAL_SERVER_ERROR);
                 return;
             }
-
+            //连接上游服务器
             ngx_http_upstream_connect(r, u);
 
             return;

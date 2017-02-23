@@ -365,7 +365,7 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
     found = 0;
 
     for (i = 0; cf->cycle->modules[i]; i++) {
-
+        //执行ngx_command_t
         cmd = cf->cycle->modules[i]->commands;
         if (cmd == NULL) {
             continue;

@@ -189,20 +189,20 @@ ngx_module_t  ngx_event_core_module = {
     NGX_MODULE_V1_PADDING
 };
 
-
+//nginx完整的事件驱动机制
 void
 ngx_process_events_and_timers(ngx_cycle_t *cycle)
 {
     ngx_uint_t  flags;
     ngx_msec_t  timer, delta;
-
+    //timer_resolution配置大于0,服务器时间精确度为毫秒
     if (ngx_timer_resolution) {
-        timer = NGX_TIMER_INFINITE;
-        flags = 0;
+        timer = NGX_TIMER_INFINITE; //在ngx_process_events中检测事件时不用等待，直接搜集所有已就绪的事件然后返回
+        flags = 0; //为0则是在ngx_process_events不需要有任务附加动作
 
     } else {
-        timer = ngx_event_find_timer();
-        flags = NGX_UPDATE_TIME;
+        timer = ngx_event_find_timer(); //最多等待timer毫秒就返回
+        flags = NGX_UPDATE_TIME; //更新缓存时间
 
 #if (NGX_WIN32)
 
@@ -241,22 +241,22 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
     //调用所有事件模块实现的process_events方法
     (void) ngx_process_events(cycle, timer, flags);
 
-    delta = ngx_current_msec - delta;
+    delta = ngx_current_msec - delta; //计算ngx_process_events执行的时间，影响触发定时器的执行
 
     ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
                    "timer delta: %M", delta);
 
-    ngx_event_process_posted(cycle, &ngx_posted_accept_events);
+    ngx_event_process_posted(cycle, &ngx_posted_accept_events); //处理新连接事件
 
     if (ngx_accept_mutex_held) {
-        ngx_shmtx_unlock(&ngx_accept_mutex);
+        ngx_shmtx_unlock(&ngx_accept_mutex); //释放accept_mutex锁
     }
 
     if (delta) {
         ngx_event_expire_timers();
     }
 
-    ngx_event_process_posted(cycle, &ngx_posted_events);
+    ngx_event_process_posted(cycle, &ngx_posted_events); //处理普通的读写事件
 }
 
 

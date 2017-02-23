@@ -220,7 +220,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         return NULL;
     }
 
-
+    //调用各模块的creat_conf创建配置项结构体
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->type != NGX_CORE_MODULE) {
             continue;
@@ -273,7 +273,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_destroy_cycle_pools(&conf);
         return NULL;
     }
-
+    //解析配置文件
     if (ngx_conf_parse(&conf, &cycle->conf_file) != NGX_CONF_OK) {
         environ = senv;
         ngx_destroy_cycle_pools(&conf);
@@ -284,7 +284,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_log_stderr(0, "the configuration file %s syntax is ok",
                        cycle->conf_file.data);
     }
-
+    //各模块的配置项的初始化赋值
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->type != NGX_CORE_MODULE) {
             continue;
@@ -329,7 +329,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
             || ngx_strcmp(ccf->pid.data, old_ccf->pid.data) != 0)
         {
             /* new pid file name */
-
+            //打开新的文件句柄
             if (ngx_create_pidfile(&ccf->pid, log) != NGX_OK) {
                 goto failed;
             }
@@ -608,7 +608,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 #endif
         }
     }
-
+    //创建socket进行监听
     if (ngx_open_listening_sockets(cycle) != NGX_OK) {
         goto failed;
     }
@@ -625,7 +625,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
     pool->log = cycle->log;
-
+    //调用各模块的init_module
     if (ngx_init_modules(cycle) != NGX_OK) {
         /* fatal */
         exit(1);
