@@ -61,7 +61,7 @@ void ngx_strlow(u_char *dst, u_char *src, size_t n);
 #define ngx_strlen(s)       strlen((const char *) s)
 
 #define ngx_strchr(s1, c)   strchr((const char *) s1, (int) c)
-
+//字符串的头尾指针中查找是否含有c字符
 static ngx_inline u_char *
 ngx_strlchr(u_char *p, u_char *last, u_char c)
 {

@@ -166,7 +166,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
 
         ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
                        "wake up, sigio %i", sigio);
-
+        //有子进程意外退出
         if (ngx_reap) {
             ngx_reap = 0;
             ngx_log_debug0(NGX_LOG_DEBUG_EVENT, cycle->log, 0, "reap children");
@@ -177,7 +177,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
         if (!live && (ngx_terminate || ngx_quit)) {
             ngx_master_process_exit(cycle);
         }
-
+        //强制关闭整个服务
         if (ngx_terminate) {
             if (delay == 0) {
                 delay = 50;
@@ -934,7 +934,7 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
 #if 0
     ngx_last_process = 0;
 #endif
-
+    //将channel放到epoll等事件处理模块中
     if (ngx_add_channel_event(cycle, ngx_channel, NGX_READ_EVENT,
                               ngx_channel_handler)
         == NGX_ERROR)
