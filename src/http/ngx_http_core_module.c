@@ -1314,6 +1314,11 @@ ngx_http_core_try_files_phase(ngx_http_request_t *r,
         if (ngx_open_cached_file(clcf->open_file_cache, &path, &of, r->pool)
             != NGX_OK)
         {
+            if (of.err == 0) {
+                ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
+                return NGX_OK;
+            }
+
             if (of.err != NGX_ENOENT
                 && of.err != NGX_ENOTDIR
                 && of.err != NGX_ENAMETOOLONG)
@@ -4405,15 +4410,13 @@ ngx_http_core_root(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     if (clcf->root.data) {
 
         if ((clcf->alias != 0) == alias) {
-            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                               "\"%V\" directive is duplicate",
-                               &cmd->name);
-        } else {
-            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                               "\"%V\" directive is duplicate, "
-                               "\"%s\" directive was specified earlier",
-                               &cmd->name, clcf->alias ? "alias" : "root");
+            return "is duplicate";
         }
+
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                           "\"%V\" directive is duplicate, "
+                           "\"%s\" directive was specified earlier",
+                           &cmd->name, clcf->alias ? "alias" : "root");
 
         return NGX_CONF_ERROR;
     }
@@ -4529,7 +4532,7 @@ ngx_http_core_limit_except(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_http_core_loc_conf_t  *clcf;
 
     if (pclcf->limit_except) {
-        return "duplicate";
+        return "is duplicate";
     }
 
     pclcf->limit_except = 0xffffffff;
