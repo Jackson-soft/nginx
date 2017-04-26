@@ -56,14 +56,14 @@ ngx_strerror_init(void)
      */
 
     len = NGX_SYS_NERR * sizeof(ngx_str_t);
-
+    //初始化系统错误数组
     ngx_sys_errlist = malloc(len);
     if (ngx_sys_errlist == NULL) {
         goto failed;
     }
 
     for (err = 0; err < NGX_SYS_NERR; err++) {
-        msg = strerror(err);
+        msg = strerror(err); //错误码所对应的错误提示信息
         len = ngx_strlen(msg);
 
         p = malloc(len);

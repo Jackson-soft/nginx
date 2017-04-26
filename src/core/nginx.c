@@ -202,7 +202,7 @@ main(int argc, char *const *argv)
     ngx_core_conf_t  *ccf;
 
     ngx_debug_init();
-
+    //错误初始化函数
     if (ngx_strerror_init() != NGX_OK) {
         return 1;
     }
