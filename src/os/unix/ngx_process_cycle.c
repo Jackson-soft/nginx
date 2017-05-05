@@ -175,7 +175,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
         }
 
         if (!live && (ngx_terminate || ngx_quit)) {
-            ngx_master_process_exit(cycle);
+            ngx_master_process_exit(cycle);//退出master进程
         }
         //强制关闭整个服务
         if (ngx_terminate) {
@@ -361,7 +361,7 @@ ngx_start_worker_processes(ngx_cycle_t *cycle, ngx_int_t n, ngx_int_t type)
         ch.pid = ngx_processes[ngx_process_slot].pid;
         ch.slot = ngx_process_slot;
         ch.fd = ngx_processes[ngx_process_slot].channel[0];
-
+        //通知子进程新进程创建完毕
         ngx_pass_open_channel(cycle, &ch);
     }
 }
