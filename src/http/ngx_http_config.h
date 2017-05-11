@@ -29,7 +29,7 @@ typedef struct {
     char       *(*init_main_conf)(ngx_conf_t *cf, void *conf); //
 
     void       *(*create_srv_conf)(ngx_conf_t *cf);
-    char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);
+    char       *(*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf); //合并父配置项的同名配置
 
     void       *(*create_loc_conf)(ngx_conf_t *cf);
     char       *(*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);

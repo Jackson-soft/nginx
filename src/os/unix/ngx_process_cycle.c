@@ -124,7 +124,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
 
     ngx_setproctitle(title);
 
-
+    // 取core模块配置
     ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
     //创建worker进程
     ngx_start_worker_processes(cycle, ccf->worker_processes,
@@ -361,7 +361,7 @@ ngx_start_worker_processes(ngx_cycle_t *cycle, ngx_int_t n, ngx_int_t type)
         ch.pid = ngx_processes[ngx_process_slot].pid;
         ch.slot = ngx_process_slot;
         ch.fd = ngx_processes[ngx_process_slot].channel[0];
-        //通知子进程新进程创建完毕
+        // 建立channel，用于进程间通信（socketpair)
         ngx_pass_open_channel(cycle, &ch);
     }
 }
@@ -747,12 +747,12 @@ ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
         ngx_log_debug0(NGX_LOG_DEBUG_EVENT, cycle->log, 0, "worker cycle");
         //事件和定时器的处理方法
         ngx_process_events_and_timers(cycle);
-
+        //强制关闭进程
         if (ngx_terminate) {
             ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0, "exiting");
             ngx_worker_process_exit(cycle);
         }
-
+        //优雅关闭进程
         if (ngx_quit) {
             ngx_quit = 0;
             ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
@@ -766,7 +766,7 @@ ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
                 ngx_close_idle_connections(cycle);
             }
         }
-
+        //重新打开所有文件
         if (ngx_reopen) {
             ngx_reopen = 0;
             ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0, "reopening logs");
