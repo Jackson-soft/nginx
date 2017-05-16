@@ -48,8 +48,8 @@ struct ngx_cycle_s {
     ngx_connection_t         *free_connections; //空闲连接
     ngx_uint_t                free_connection_n; //空闲连接个数  
 
-    ngx_module_t            **modules;
-    ngx_uint_t                modules_n;
+    ngx_module_t            **modules; //所有的加载模块
+    ngx_uint_t                modules_n; //模块总数
     ngx_uint_t                modules_used;    /* unsigned  modules_used:1; */
 
     ngx_queue_t               reusable_connections_queue; //再利用连接队列

@@ -18,8 +18,8 @@ typedef void *            ngx_buf_tag_t;
 typedef struct ngx_buf_s  ngx_buf_t;
 
 struct ngx_buf_s {
-    u_char          *pos;
-    u_char          *last;
+    u_char          *pos; //开始的地址
+    u_char          *last; //结束的地址
     off_t            file_pos;
     off_t            file_last;
 
@@ -27,7 +27,7 @@ struct ngx_buf_s {
     u_char          *end;           /* end of buffer */
     ngx_buf_tag_t    tag;
     ngx_file_t      *file;
-    ngx_buf_t       *shadow;
+    ngx_buf_t       *shadow; //影子缓冲区
 
 
     /* the buf's content could be changed */

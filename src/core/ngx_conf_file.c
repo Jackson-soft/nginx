@@ -212,7 +212,7 @@ ngx_conf_parse(ngx_conf_t *cf, ngx_str_t *filename)
         cf->conf_file->file.offset = 0;
         cf->conf_file->file.log = cf->log;
         cf->conf_file->line = 1;
-
+        // 标记当前是解析文件
         type = parse_file;
 
         if (ngx_dump_config
@@ -230,11 +230,11 @@ ngx_conf_parse(ngx_conf_t *cf, ngx_str_t *filename)
         }
 
     } else if (cf->conf_file->file.fd != NGX_INVALID_FILE) {
-
+        // 标记当前是解析配置块
         type = parse_block;
 
     } else {
-        type = parse_param;
+        type = parse_param; // 解析-g传递的命令行参数
     }
 
 
@@ -314,7 +314,7 @@ ngx_conf_parse(ngx_conf_t *cf, ngx_str_t *filename)
             goto failed;
         }
 
-
+        //执行模块里command相关，进行解析
         rc = ngx_conf_handler(cf, rc);
 
         if (rc == NGX_ERROR) {

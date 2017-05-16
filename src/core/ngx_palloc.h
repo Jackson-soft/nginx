@@ -45,7 +45,7 @@ struct ngx_pool_large_s {
     void                 *alloc; //nginx分配的大块内存空间
 };
 
-
+//存储内存的实际数据结构
 typedef struct {
     u_char               *last; //所管理的内存block中已使用的内存的末尾地址，这也是下次分配的起始地址
     u_char               *end; //所管理的内存block的尾地址，该指针在分配此block时确定，用来标记last的边界值
