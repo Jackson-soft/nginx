@@ -740,7 +740,7 @@ ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
         if (ngx_exiting) {
             if (ngx_event_no_timers_left() == NGX_OK) {
                 ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0, "exiting");
-                ngx_worker_process_exit(cycle);
+                ngx_worker_process_exit(cycle); //退出worker进程
             }
         }
 
@@ -892,7 +892,7 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
     for (i = 0; i < cycle->listening.nelts; i++) {
         ls[i].previous = NULL;
     }
-
+    //如果模块实现了init_process方法，则调用该模块的init_process方法
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->init_process) {
             if (cycle->modules[i]->init_process(cycle) == NGX_ERROR) {
@@ -946,7 +946,7 @@ ngx_worker_process_exit(ngx_cycle_t *cycle)
 {
     ngx_uint_t         i;
     ngx_connection_t  *c;
-
+    //调用模块的exit_process方法
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->exit_process) {
             cycle->modules[i]->exit_process(cycle);

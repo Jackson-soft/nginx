@@ -15,7 +15,7 @@ typedef struct {
     ngx_array_t               pools;
 } ngx_thread_pool_conf_t;
 
-
+//线程池队列
 typedef struct {
     ngx_thread_task_t        *first;
     ngx_thread_task_t       **last;

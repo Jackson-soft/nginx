@@ -34,9 +34,9 @@ struct ngx_shm_zone_s {
     ngx_uint_t                noreuse;  /* unsigned  noreuse:1; */
 };
 
-
+// nginx核心数据结构
 struct ngx_cycle_s {
-    void                  ****conf_ctx; //配置上下文数组(含所有模块)
+    void                  ****conf_ctx; //配置上下文数组(含所有模块)二维数组
     ngx_pool_t               *pool; //内存池
 
     ngx_log_t                *log; //日志
