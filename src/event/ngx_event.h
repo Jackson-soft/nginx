@@ -26,47 +26,47 @@ typedef struct {
 
 #endif
 
-
+// nginx事件模块的核心结构体
 struct ngx_event_s {
-    void            *data;
+    void            *data; //事件相关的数据
 
-    unsigned         write:1;
+    unsigned         write:1; //写事件
 
-    unsigned         accept:1;
+    unsigned         accept:1; //监听
 
     /* used to detect the stale events in kqueue and epoll */
-    unsigned         instance:1;
+    unsigned         instance:1; //检测事件是否失效
 
     /*
      * the event was passed or would be passed to a kernel;
      * in aio mode - operation was posted.
      */
-    unsigned         active:1;
+    unsigned         active:1; // 事件是否是活跃的，也就是说已经添加进了epoll关注
 
     unsigned         disabled:1;
 
     /* the ready event; in aio mode 0 means that no operation can be posted */
-    unsigned         ready:1;
+    unsigned         ready:1; // 事件已经就绪
 
     unsigned         oneshot:1;
 
     /* aio operation is complete */
-    unsigned         complete:1;
+    unsigned         complete:1; // 异步操作的完成标志，用于aio和多线程
 
-    unsigned         eof:1;
+    unsigned         eof:1; //结束符
     unsigned         error:1;
 
-    unsigned         timedout:1;
-    unsigned         timer_set:1;
+    unsigned         timedout:1; //事件超时
+    unsigned         timer_set:1; //事件是否在定时器中
 
-    unsigned         delayed:1;
+    unsigned         delayed:1; //事件延迟处理
 
-    unsigned         deferred_accept:1;
+    unsigned         deferred_accept:1; // 延迟接收请求
 
     /* the pending eof reported by kqueue, epoll or in aio chain operation */
     unsigned         pending_eof:1;
 
-    unsigned         posted:1;
+    unsigned         posted:1; // 事件是否已经加入延后处理队列中，可以加快事件的处理速度
 
     unsigned         closed:1;
 
@@ -107,7 +107,7 @@ struct ngx_event_s {
     unsigned         available:1;
 #endif
 
-    ngx_event_handler_pt  handler;
+    ngx_event_handler_pt  handler; // 事件发生时调用的函数
 
 
 #if (NGX_HAVE_IOCP)
@@ -116,12 +116,12 @@ struct ngx_event_s {
 
     ngx_uint_t       index;
 
-    ngx_log_t       *log;
+    ngx_log_t       *log; //日志
 
-    ngx_rbtree_node_t   timer;
+    ngx_rbtree_node_t   timer; // 红黑树节点成员，用于把事件加入定时器
 
     /* the posted queue */
-    ngx_queue_t      queue;
+    ngx_queue_t      queue; // 队列成员，加入延后处理的队列
 
 #if 0
 
