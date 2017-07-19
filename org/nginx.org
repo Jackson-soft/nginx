@@ -217,7 +217,30 @@ struct ngx_module_s {
 };
 #+END_SRC
 
-极致的模块化？(好还是不好）
+*动态模块加载*
+
+Nginx 1.9.11 后支持动态模块加载。作为动态模块必须是在 ~configure --with~ 后追加 ~=dynamic~ 参数来生成动态可加载的共享对象。如下：
+
+#+BEGIN_SRC c
+./configure --with-http_geoip_module=dynamic \
+--with-http_image_filter_module=dynamic \
+--with-mail=dynamic \
+--with-stream=dynamic \
+--with-http_xslt_module=dynamic
+#+END_SRC
+
+编译完成后会在默认的路径为/usr/local/nginx/modules 的目录来存放动态模块的二进制文件。
+
+加载动态模块是需添加如下配置：
+
+#+Begin_SRC nginx
+load_module "modules/ngx_http_geoip_module.so";
+load_module "modules/ngx_stream_module.so";
+#+END_SRC
+
+*极致的模块化？(好还是不好）*
+
+redis 4.0 也加入对模块的支持
 
 #+BEGIN_SRC c
 ngx_module_t *ngx_modules[] = {
@@ -284,7 +307,7 @@ typedef struct {
 } ngx_str_t;
 #+END_SRC
 
-*ngx_pool*
+*~ngx_pool~*
 #+BEGIN_SRC c
 struct ngx_pool_s {
     ngx_pool_data_t       d; //数据块
