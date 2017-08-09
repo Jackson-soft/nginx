@@ -273,7 +273,13 @@ main(int argc, char *const *argv)
     if (ngx_crc32_table_init() != NGX_OK) {
         return 1;
     }
-    //通过环境变量NGINX完成socket的继承，继承来的socket将会放到init_cycle的listening数组中。同时可以读取master进程传递的平滑升级信息等等
+
+    /*
+     * ngx_slab_sizes_init() requires ngx_pagesize set in ngx_os_init()
+     */
+
+    ngx_slab_sizes_init();
+
     if (ngx_add_inherited_sockets(&init_cycle) != NGX_OK) {
         return 1;
     }
