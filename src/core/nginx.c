@@ -229,7 +229,12 @@ main(int argc, char *const *argv)
 #endif
 
     ngx_pid = ngx_getpid();
+<<<<<<< HEAD
     //初始化日志，如初始化全局变量ngx_prefix
+=======
+    ngx_parent = ngx_getppid();
+
+>>>>>>> upstream/master
     log = ngx_log_init(ngx_prefix);
     if (log == NULL) {
         return 1;
