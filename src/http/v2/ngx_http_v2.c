@@ -783,8 +783,8 @@ ngx_http_v2_state_head(ngx_http_v2_connection_t *h2c, u_char *pos, u_char *end)
                    type, h2c->state.flags, h2c->state.length, h2c->state.sid);
 
     if (type >= NGX_HTTP_V2_FRAME_STATES) {
-        ngx_log_debug1(NGX_LOG_DEBUG_HTTP, h2c->connection->log, 0,
-                       "http2 frame with unknown type %ui", type);
+        ngx_log_error(NGX_LOG_INFO, h2c->connection->log, 0,
+                      "client sent frame with unknown type %ui", type);
         return ngx_http_v2_state_skip(h2c, pos, end);
     }
 
@@ -3257,19 +3257,9 @@ ngx_http_v2_validate_header(ngx_http_request_t *r, ngx_http_v2_header_t *header)
             continue;
         }
 
-        switch (ch) {
-        case '\0':
-        case LF:
-        case CR:
-        case ':':
-            ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
-                          "client sent invalid header name: \"%V\"",
-                          &header->name);
-
-            return NGX_ERROR;
-        }
-
-        if (ch >= 'A' && ch <= 'Z') {
+        if (ch == '\0' || ch == LF || ch == CR || ch == ':'
+            || (ch >= 'A' && ch <= 'Z'))
+        {
             ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
                           "client sent invalid header name: \"%V\"",
                           &header->name);
@@ -3283,10 +3273,7 @@ ngx_http_v2_validate_header(ngx_http_request_t *r, ngx_http_v2_header_t *header)
     for (i = 0; i != header->value.len; i++) {
         ch = header->value.data[i];
 
-        switch (ch) {
-        case '\0':
-        case LF:
-        case CR:
+        if (ch == '\0' || ch == LF || ch == CR) {
             ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
                           "client sent header \"%V\" with "
                           "invalid value: \"%V\"",
