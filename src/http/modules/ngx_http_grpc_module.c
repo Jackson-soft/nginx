@@ -2410,6 +2410,7 @@ ngx_http_grpc_parse_header(ngx_http_request_t *r, ngx_http_grpc_ctx_t *ctx,
         }
 
         ctx->padding = 0;
+        ctx->frame_state = state;
     }
 
     if (state < sw_fragment) {
@@ -3211,7 +3212,7 @@ ngx_http_grpc_parse_rst_stream(ngx_http_request_t *r, ngx_http_grpc_ctx_t *ctx,
         switch (state) {
 
         case sw_start:
-            ctx->error = ch << 24;
+            ctx->error = (ngx_uint_t) ch << 24;
             state = sw_error_2;
             break;
 
@@ -3324,7 +3325,7 @@ ngx_http_grpc_parse_goaway(ngx_http_request_t *r, ngx_http_grpc_ctx_t *ctx,
             break;
 
         case sw_error:
-            ctx->error = ch << 24;
+            ctx->error = (ngx_uint_t) ch << 24;
             state = sw_error_2;
             break;
 
@@ -3554,7 +3555,7 @@ ngx_http_grpc_parse_settings(ngx_http_request_t *r, ngx_http_grpc_ctx_t *ctx,
             break;
 
         case sw_value:
-            ctx->setting_value = ch << 24;
+            ctx->setting_value = (ngx_uint_t) ch << 24;
             state = sw_value_2;
             break;
 
